@@ -2,65 +2,170 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>App Roteiro Semiológico</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árvore de Decisão Semiológica</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 600px; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
-        .input-box { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
-        .input-box:focus { border-color: #3498db; }
-        .resultado-box { margin-top: 20px; }
-        .balao-pergunta { background: #ecf0f1; border-left: 5px solid #3498db; padding: 15px; border-radius: 6px; margin-bottom: 12px; animation: fadeIn 0.4s ease; }
-        .balao-pergunta h4 { margin: 0 0 8px 0; color: #2980b9; }
-        .balao-pergunta ul { margin: 0; padding-left: 20px; }
-        .balao-pergunta li { margin-bottom: 6px; font-size: 14px; color: #34495e; }
-        .erro-msg { color: #e74c3c; text-align: center; font-weight: bold; margin-top: 15px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 750px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .input-box {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-box:focus {
+            border-color: #3498db;
+        }
+        .resultado-box {
+            margin-top: 25px;
+        }
+        .balao-pergunta {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s ease;
+        }
+        .balao-pergunta h3 {
+            margin: 0 0 15px 0;
+            color: #2980b9;
+            font-size: 18px;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #34495e;
+            line-height: 1.4;
+        }
+        ul ul {
+            margin-top: 8px;
+            list-style-type: circle;
+        }
+        .erro-msg {
+            color: #e74c3c;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h2>Busca Semiológica</h2>
-    <input type="text" id="sintomaInput" class="input-box" placeholder="Digite o sintoma e pressione Enter (ex: Dor, Febre, Genética)..." autofocus>
+    <h2>Árvore de Decisão: Queixa Principal</h2>
+    <input type="text" id="sintomaInput" class="input-box" placeholder="Digite o sintoma (ex: dor, febre, dispneia, tontura, fadiga) e pressione Enter..." autofocus>
     <div id="resultadoContainer" class="resultado-box"></div>
 </div>
 
 <script>
-    // Base de dados simulada contendo os roteiros
-    const baseDados = {
+    // Base de dados estruturada baseada exatamente na árvore de decisão fornecida
+    const arvoreDecisao = {
         "dor": {
-            titulo: "Investigação de Dor",
-            perguntas: [
-                "Localização: Onde é a dor? O paciente deve apontar exatamente o local.",
-                "Irradiação: A dor se espalha para outra parte do corpo?",
-                "Qualidade ou caráter: Como é a dor? (Ex: aperto, queimação, pontada, cólica, choque).",
-                "Intensidade: Quão forte é a dor? (Escala de 0 a 10 ou leve, moderada, intensa).",
-                "Duração e frequência: Quanto tempo dura cada episódio e qual a frequência?",
-                "Evolução: Como começou (súbita ou gradual) e como se comporta ao longo do tempo?",
-                "Fatores agravantes: O que faz a dor começar ou piorar?",
-                "Fatores de alívio: O que faz a dor melhorar?",
-                "Sintomas associados: Há outros sinais junto com a dor (náuseas, suor frio, tontura)?"
+            titulo: "SE O SINTOMA FOR: DOR",
+            itens: [
+                "<strong>1. Onde está localizada?</strong> (Exato local e irradiação para outras regiões)",
+                "<strong>2. Qual é o caráter/qualidade?</strong> (Aperto, queimação, pontada, cólica, choque)",
+                "<strong>3. Qual a intensidade?</strong> (Escala 0 a 10 ou leve/moderada/intensa)",
+                "<strong>4. Como é a dinâmica temporal?</strong><ul><li>Início: Súbito ou gradual?</li><li>Duração e Frequência: Quanto tempo dura e quão frequente é?</li><li>Evolução: Piora, melhora ou mantém-se estável?</li></ul>",
+                "<strong>5. Quais são os moduladores?</strong><ul><li>Agravantes: O que precipita ou piora? (Esforço, posição, alimentação)</li><li>Atenuantes: O que alivia? (Repouso, fármacos, posição)</li></ul>",
+                "<strong>6. Há sinais de alerta concomitantes?</strong> (Náuseas, sudorese fria, dispneia, tontura)"
             ]
         },
         "febre": {
-            titulo: "Investigação de Febre",
-            perguntas: [
-                "Valor aferido: Qual foi a temperatura máxima medida e qual termômetro foi usado?",
-                "Modo de início: A febre começou de forma súbita (pico febril) ou insidiosa?",
-                "Duração e padrão: É contínua, remitente, intermitente ou diária?",
-                "Sintomas associados: Há calafrios, sudorese noturna, mialgia, cefaleia ou exantema?",
-                "Fatores de melhora: A temperatura cede com o uso de antitérmicos comuns?",
-                "Contexto: Houve viagens recentes ou contato com doentes?"
+            titulo: "SE O SINTOMA FOR: FEBRE",
+            itens: [
+                "<strong>1. Qual o valor térmico exato aferido e qual termômetro foi usado?</strong>",
+                "<strong>2. Como se instalou?</strong> (Início súbito com pico ou insidioso)",
+                "<strong>3. Qual o padrão de curva térmica?</strong> (Contínua, remitente, intermitente)",
+                "<strong>4. Responde a antitérmicos comuns?</strong> (Sim / Não / Parcialmente)",
+                "<strong>5. Quais sintomas acompanham?</strong> (Calafrios, sudorese noturna, mialgia, exantema)",
+                "<strong>6. Qual o contexto epidemiológico?</strong> (Viagens recentes, contato com sintomáticos, vetores)"
             ]
         },
-        "genetica": {
-            titulo: "Investigação em Genética / Erros Inatos do Metabolismo",
-            perguntas: [
-                "Fatores desencadeantes: Os episódios coincidem com jejum prolongado ou infecções?",
-                "Sinais neurológicos agudos: Há letargia inexplicada, vômitos recorrentes ou crises convulsivas?",
-                "Evidências sensoriais: Observa-se odor atípico em fluidos corporais (urina, suor)?",
-                "Heredograma: Há consanguinidade parental ou histórico de óbitos neonatais precoces na família?"
+        "dispneia": {
+            titulo: "SE O SINTOMA FOR: DISPNEIA (Falta de Ar)",
+            itens: [
+                "<strong>1. Instalação:</strong> Aguda (minutos/horas) ou Crônica/Progressiva (semanas/meses)?",
+                "<strong>2. Qual o limiar de esforço precipitante?</strong> (Grandes, médios, pequenos esforços ou repouso)",
+                "<strong>3. Há repercussão postural?</strong> (Ortopneia ou Dispneia Paroxística Noturna)",
+                "<strong>4. Há manifestações associadas?</strong> (Tosse, expectoração, sibilos, dor torácica, edema de MMII)"
+            ]
+        },
+        "falta de ar": {
+            titulo: "SE O SINTOMA FOR: DISPNEIA (Falta de Ar)",
+            itens: [
+                "<strong>1. Instalação:</strong> Aguda (minutos/horas) ou Crônica/Progressiva (semanas/meses)?",
+                "<strong>2. Qual o limiar de esforço precipitante?</strong> (Grandes, médios, pequenos esforços ou repouso)",
+                "<strong>3. Há repercussão postural?</strong> (Ortopneia ou Dispneia Paroxística Noturna)",
+                "<strong>4. Há manifestações associadas?</strong> (Tosse, expectoração, sibilos, dor torácica, edema de MMII)"
+            ]
+        },
+        "tontura": {
+            titulo: "SE O SINTOMA FOR: TONTURA / VERTIGEM",
+            itens: [
+                "<strong>1. Qual a natureza exata da sensação?</strong><ul><li>Vertigem rotatória verdadeira (ambiente rodando)</li><li>Desequilíbrio / Instabilidade postural</li><li>Pré-síncope / Cabeça vazia</li></ul>",
+                "<strong>2. Qual a duração do episódio?</strong> (Segundos, horas ou contínua)",
+                "<strong>3. O que desencadeia?</strong> (Movimento cefálico, ortostatismo rápido, estresse)",
+                "<strong>4. Apresenta sintomas neurológicos/auditivos focais?</strong> (Zumbido, hipoacusia, diplopia, déficit motor)"
+            ]
+        },
+        "vertigem": {
+            titulo: "SE O SINTOMA FOR: TONTURA / VERTIGEM",
+            itens: [
+                "<strong>1. Qual a natureza exata da sensação?</strong><ul><li>Vertigem rotatória verdadeira (ambiente rodando)</li><li>Desequilíbrio / Instabilidade postural</li><li>Pré-síncope / Cabeça vazia</li></ul>",
+                "<strong>2. Qual a duração do episódio?</strong> (Segundos, horas ou contínua)",
+                "<strong>3. O que desencadeia?</strong> (Movimento cefálico, ortostatismo rápido, estresse)",
+                "<strong>4. Apresenta sintomas neurológicos/auditivos focais?</strong> (Zumbido, hipoacusia, diplopia, déficit motor)"
+            ]
+        },
+        "fadiga": {
+            titulo: "SE O SINTOMA FOR: FADIGA / CANSAÇO",
+            itens: [
+                "<strong>1. Qual o tempo de evolução e o impacto funcional nas atividades diárias?</strong>",
+                "<strong>2. O repouso/sono reparador traz melhora significativa?</strong> (Sim / Não)",
+                "<strong>3. Há comemorativos clínicos associados?</strong> (Oscilação ponderal, distúrbios do sono, queda capilar, mialgias difusas)"
+            ]
+        },
+        "cansaço": {
+            titulo: "SE O SINTOMA FOR: FADIGA / CANSAÇO",
+            itens: [
+                "<strong>1. Qual o tempo de evolução e o impacto funcional nas atividades diárias?</strong>",
+                "<strong>2. O repouso/sono reparador traz melhora significativa?</strong> (Sim / Não)",
+                "<strong>3. Há comemorativos clínicos associados?</strong> (Oscilação ponderal, distúrbios do sono, queda capilar, mialgias difusas)"
             ]
         }
     };
@@ -71,30 +176,29 @@
     input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             const termo = input.value.trim().toLowerCase();
-            container.innerHTML = ''; // Limpa resultados anteriores
+            container.innerHTML = ''; // Limpa buscas anteriores
 
             if (!termo) return;
 
-            // Busca correspondência simples por chave
             let encontrado = null;
-            for (let chave in baseDados) {
+            for (let chave in arvoreDecisao) {
                 if (termo.includes(chave)) {
-                    encontrado = baseDados[chave];
+                    encontrado = arvoreDecisao[chave];
                     break;
                 }
             }
 
             if (encontrado) {
                 let htmlBalao = `<div class="balao-pergunta">
-                    <h4>${encontrado.titulo}</h4>
+                    <h3>${encontrado.titulo}</h3>
                     <ul>`;
-                encontrado.perguntas.forEach(p => {
-                    htmlBalao += `<li>${p}</li>`;
+                encontrado.itens.forEach(item => {
+                    htmlBalao += `<li>${item}</li>`;
                 });
                 htmlBalao += `</ul></div>`;
                 container.innerHTML = htmlBalao;
             } else {
-                container.innerHTML = `<div class="erro-msg">Nenhum roteiro encontrado para "${input.value}". Tente termos como "dor", "febre" ou "genetica".</div>`;
+                container.innerHTML = `<div class="erro-msg">Nenhuma ramificação encontrada para "${input.value}". Tente digitar: dor, febre, dispneia, tontura ou fadiga.</div>`;
             }
         }
     });
