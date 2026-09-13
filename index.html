@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>App Roteiro Semiológico</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 40px; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 600px; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+        .input-box { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
+        .input-box:focus { border-color: #3498db; }
+        .resultado-box { margin-top: 20px; }
+        .balao-pergunta { background: #ecf0f1; border-left: 5px solid #3498db; padding: 15px; border-radius: 6px; margin-bottom: 12px; animation: fadeIn 0.4s ease; }
+        .balao-pergunta h4 { margin: 0 0 8px 0; color: #2980b9; }
+        .balao-pergunta ul { margin: 0; padding-left: 20px; }
+        .balao-pergunta li { margin-bottom: 6px; font-size: 14px; color: #34495e; }
+        .erro-msg { color: #e74c3c; text-align: center; font-weight: bold; margin-top: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h2>Busca Semiológica</h2>
+    <input type="text" id="sintomaInput" class="input-box" placeholder="Digite o sintoma e pressione Enter (ex: Dor, Febre, Genética)..." autofocus>
+    <div id="resultadoContainer" class="resultado-box"></div>
+</div>
+
+<script>
+    // Base de dados simulada contendo os roteiros
+    const baseDados = {
+        "dor": {
+            titulo: "Investigação de Dor",
+            perguntas: [
+                "Localização: Onde é a dor? O paciente deve apontar exatamente o local.",
+                "Irradiação: A dor se espalha para outra parte do corpo?",
+                "Qualidade ou caráter: Como é a dor? (Ex: aperto, queimação, pontada, cólica, choque).",
+                "Intensidade: Quão forte é a dor? (Escala de 0 a 10 ou leve, moderada, intensa).",
+                "Duração e frequência: Quanto tempo dura cada episódio e qual a frequência?",
+                "Evolução: Como começou (súbita ou gradual) e como se comporta ao longo do tempo?",
+                "Fatores agravantes: O que faz a dor começar ou piorar?",
+                "Fatores de alívio: O que faz a dor melhorar?",
+                "Sintomas associados: Há outros sinais junto com a dor (náuseas, suor frio, tontura)?"
+            ]
+        },
+        "febre": {
+            titulo: "Investigação de Febre",
+            perguntas: [
+                "Valor aferido: Qual foi a temperatura máxima medida e qual termômetro foi usado?",
+                "Modo de início: A febre começou de forma súbita (pico febril) ou insidiosa?",
+                "Duração e padrão: É contínua, remitente, intermitente ou diária?",
+                "Sintomas associados: Há calafrios, sudorese noturna, mialgia, cefaleia ou exantema?",
+                "Fatores de melhora: A temperatura cede com o uso de antitérmicos comuns?",
+                "Contexto: Houve viagens recentes ou contato com doentes?"
+            ]
+        },
+        "genetica": {
+            titulo: "Investigação em Genética / Erros Inatos do Metabolismo",
+            perguntas: [
+                "Fatores desencadeantes: Os episódios coincidem com jejum prolongado ou infecções?",
+                "Sinais neurológicos agudos: Há letargia inexplicada, vômitos recorrentes ou crises convulsivas?",
+                "Evidências sensoriais: Observa-se odor atípico em fluidos corporais (urina, suor)?",
+                "Heredograma: Há consanguinidade parental ou histórico de óbitos neonatais precoces na família?"
+            ]
+        }
+    };
+
+    const input = document.getElementById('sintomaInput');
+    const container = document.getElementById('resultadoContainer');
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const termo = input.value.trim().toLowerCase();
+            container.innerHTML = ''; // Limpa resultados anteriores
+
+            if (!termo) return;
+
+            // Busca correspondência simples por chave
+            let encontrado = null;
+            for (let chave in baseDados) {
+                if (termo.includes(chave)) {
+                    encontrado = baseDados[chave];
+                    break;
+                }
+            }
+
+            if (encontrado) {
+                let htmlBalao = `<div class="balao-pergunta">
+                    <h4>${encontrado.titulo}</h4>
+                    <ul>`;
+                encontrado.perguntas.forEach(p => {
+                    htmlBalao += `<li>${p}</li>`;
+                });
+                htmlBalao += `</ul></div>`;
+                container.innerHTML = htmlBalao;
+            } else {
+                container.innerHTML = `<div class="erro-msg">Nenhum roteiro encontrado para "${input.value}". Tente termos como "dor", "febre" ou "genetica".</div>`;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
